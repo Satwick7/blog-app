@@ -2,22 +2,26 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 
-mongoose.connect("mongodb://localhost:27017/blog_tut",{
-    useNewUrlParser:true,
-    useUnifiedTopology:true
+const mongoURI = process.env('MONGO_URI');
+
+mongoose.connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
 })
-.then(()=>console.log('database is connected'));
+.then(() => console.log('database is connected'))
+.catch(err => console.error('Error connecting to database:', err));
 
-// middlewares
-app.use(express.urlencoded({extended : true}));
+// Middlewares
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.set('view engine','ejs');
+app.set('view engine', 'ejs');
 
-// routes
+// Routes
 app.use(require('./routes/index'));
 app.use(require('./routes/compose'));
 app.use(require('./routes/blog'));
 
-app.listen(3000,()=>{
-    console.log('server is running on port 3000');
-})
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
